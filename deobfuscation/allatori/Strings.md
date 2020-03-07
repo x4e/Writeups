@@ -8,17 +8,21 @@ Here is a very quick transformer I wrote for it using https://github.com/java-de
 /**
  * @author cookiedragon234 07/Mar/2020
  */
-class AllatoriStringDeobf: Transformer<TransformerConfig?>() {
+class AllatoriStringDeobf: Transformer<TransformerConfig>() {
 	override fun transform(): Boolean {
 		val decrypterFuncs = HashMap<ClassNode, MutableSet<MethodNode>>()
 		val provider = DelegatingProvider().apply {
-			register(JVMMethodProvider())
-			register(JVMComparisonProvider())
-			register(MappedMethodProvider(classes))
-			register(MappedMethodProvider(classpath))
-			register(MappedFieldProvider())
-			register(StringTransformerMethodProvider())
-			register(ClassComparisonProvider())
+			for (provider in arrayOf(
+				JVMMethodProvider(),
+				JVMComparisonProvider(),
+				MappedMethodProvider(classes),
+				MappedMethodProvider(classpath),
+				MappedFieldProvider(),
+				StringTransformerMethodProvider(),
+				ClassComparisonProvider()
+			)) {
+				register(provider)
+			}
 		}
 		var totalDecrypted = 0
 		var decrypted = 0
